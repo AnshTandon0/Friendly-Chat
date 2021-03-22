@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -21,15 +22,31 @@ public class SignIn extends AppCompatActivity {
     private EditText email , password1  ;
     private FirebaseAuth firebaseAuth;
     private ProgressDialog progressDialog;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
+
         email = findViewById(R.id.email);
         password1 = findViewById(R.id.password1);
         firebaseAuth = FirebaseAuth.getInstance();
         progressDialog = new ProgressDialog(this);
+        sharedPreferences = getSharedPreferences("Message",MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+
+        if (sharedPreferences.getString("First Time Second Time" , "").equalsIgnoreCase("Second Time"))
+        {
+            firebaseAuth.signInWithEmailAndPassword(sharedPreferences.getString("email",""),sharedPreferences.getString("password",""));
+            Intent intent = new Intent(this , MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+
     }
 
     public void SignIn(View view)
@@ -60,6 +77,10 @@ public class SignIn extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
+                    editor.putString("email",email.getText().toString());
+                    editor.putString("password",password1.getText().toString());
+                    editor.putString("First Time Second Time","Second Time");
+                    editor.commit();
                     Toast.makeText(SignIn.this, "Successfully Sign In", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(SignIn.this, MainActivity.class);
                     startActivity(intent);

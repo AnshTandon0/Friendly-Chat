@@ -31,7 +31,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
 
     @Override
     public void onBindViewHolder(@NonNull MessageHolder holder, int position) {
-        holder.textView.setText(sendMessages.get(position).getMessage());
+        holder.message.setText(sendMessages.get(position).getMessage());
+        holder.emailSender.setText(sendMessages.get(position).getSender());
     }
 
     @Override
@@ -41,10 +42,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageH
 
     public class MessageHolder extends RecyclerView.ViewHolder
     {
-        TextView textView ;
+        TextView message;
+        TextView emailSender;
         public MessageHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.textView);
+            message = itemView.findViewById(R.id.message);
+            emailSender = itemView.findViewById(R.id.emailSender);
         }
     }
 }

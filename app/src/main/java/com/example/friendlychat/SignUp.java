@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
@@ -20,6 +21,8 @@ public class SignUp extends AppCompatActivity {
 
     private EditText email , password1 , password2 ;
     private FirebaseAuth firebaseAuth;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     private ProgressDialog progressDialog;
 
     // TODO add direct google signup and signIn feature
@@ -33,6 +36,16 @@ public class SignUp extends AppCompatActivity {
         password1 = findViewById(R.id.password1);
         password2 = findViewById(R.id.password2);
         progressDialog = new ProgressDialog(this);
+        sharedPreferences = getSharedPreferences("Message",MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        if (sharedPreferences.getString("First Time Second Time" , "").equalsIgnoreCase("Second Time"))
+        {
+            firebaseAuth.signInWithEmailAndPassword(sharedPreferences.getString("email",""),sharedPreferences.getString("password",""));
+            Intent intent = new Intent(this , MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public void register(View view)
@@ -83,6 +96,10 @@ public class SignUp extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
+                    editor.putString("email",email.getText().toString());
+                    editor.putString("password",password1.getText().toString());
+                    editor.putString("First Time Second Time","Second Time");
+                    editor.commit();
                     Toast.makeText(SignUp.this, "Successfully registered", Toast.LENGTH_LONG).show();
                     Intent intent = new Intent(SignUp.this, MainActivity.class);
                     startActivity(intent);

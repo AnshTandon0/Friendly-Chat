@@ -6,12 +6,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Application;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -24,11 +27,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    EditText editText;
-    ArrayList<Message> sendMessages = new ArrayList<>();
-    FirebaseDatabase firebaseDatabase;
-    DatabaseReference databaseReference;
-    ChildEventListener childEventListener;
+    private EditText editText;
+    private ArrayList<Message> sendMessages = new ArrayList<>();
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+    private ChildEventListener childEventListener;
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,32 +42,35 @@ public class MainActivity extends AppCompatActivity {
         editText = findViewById(R.id.editText);
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference().child("messages");
-        childEventListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+        sharedPreferences = getSharedPreferences("Message",MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
-            }
 
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+         childEventListener = new ChildEventListener() {
+          @Override
+          public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+             Message m = snapshot.getValue(Message.class);
+             sendMessages.add(m);
+             display();
+          }
 
-            }
+          @Override
+          public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+          }
 
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+          @Override
+          public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+          }
 
-            }
+          @Override
+          public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+          }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        };
+          @Override
+          public void onCancelled(@NonNull DatabaseError error) {
+          }
+      };
+        databaseReference.addChildEventListener(childEventListener);
     }
 
     @Override
@@ -75,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
     {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.signOut();
+        editor.putString("First Time Second Time","First Time");
+        editor.commit();
         Intent intent = new Intent(this , SignIn.class);
         startActivity(intent);
         finish();
@@ -84,15 +94,17 @@ public class MainActivity extends AppCompatActivity {
     {
         Message message = new Message("anonymous","anonymous","");
         message.setMessage(editText.getText().toString());
-        sendMessages.add(message);
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        MessageAdapter messageAdapter = new MessageAdapter(sendMessages,this);
-        recyclerView.setAdapter(messageAdapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        message.setSender(sharedPreferences.getString("email",""));
         databaseReference.push().setValue(message);
 
         // clear the editText
         editText.setText("");
     }
-
+    public void display()
+    {
+        RecyclerView  recyclerView = findViewById(R.id.recyclerView);
+        MessageAdapter messageAdapter = new MessageAdapter(sendMessages,this);
+        recyclerView.setAdapter(messageAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 }
