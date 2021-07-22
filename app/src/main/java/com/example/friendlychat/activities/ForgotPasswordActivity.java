@@ -1,4 +1,4 @@
-package com.example.friendlychat;
+package com.example.friendlychat.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,11 +11,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.friendlychat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class ForgotPassword extends AppCompatActivity {
+public class ForgotPasswordActivity extends AppCompatActivity {
 
     private EditText email;
     private FirebaseAuth firebaseAuth;
@@ -51,14 +52,14 @@ public class ForgotPassword extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
-                    Toast.makeText(ForgotPassword.this, "Password reset link send to email", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(ForgotPassword.this, SignIn.class);
+                    Toast.makeText(ForgotPasswordActivity.this, "Password reset link send to email", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(ForgotPasswordActivity.this, SignInActivity.class);
                     startActivity(intent);
                     finish();
                 }
                 else
                 {
-                    Toast.makeText(ForgotPassword.this, "Password Reset Failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ForgotPasswordActivity.this, "Password Reset Failed", Toast.LENGTH_LONG).show();
                 }
                 progressDialog.dismiss();
             }

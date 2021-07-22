@@ -1,4 +1,4 @@
-package com.example.friendlychat;
+package com.example.friendlychat.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,12 +12,13 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.friendlychat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class SignIn extends AppCompatActivity {
+public class SignInActivity extends AppCompatActivity {
 
     private EditText email , password1  ;
     private FirebaseAuth firebaseAuth;
@@ -81,14 +82,14 @@ public class SignIn extends AppCompatActivity {
                     editor.putString("password",password1.getText().toString());
                     editor.putString("First Time Second Time","Second Time");
                     editor.commit();
-                    Toast.makeText(SignIn.this, "Successfully Sign In", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(SignIn.this, MainActivity.class);
+                    Toast.makeText(SignInActivity.this, "Successfully Sign In", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(SignInActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 }
                 else
                 {
-                    Toast.makeText(SignIn.this, "Sign In Failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignInActivity.this, "Sign In Failed", Toast.LENGTH_LONG).show();
                 }
                 progressDialog.dismiss();
             }
@@ -98,14 +99,14 @@ public class SignIn extends AppCompatActivity {
 
     public void SignUpActivity(View view)
     {
-        Intent intent = new Intent(this, SignUp.class);
+        Intent intent = new Intent(this, SignUpActivity.class);
         startActivity(intent);
         finish();
     }
 
     public void ForgotPasswordActivity(View view)
     {
-        Intent intent = new Intent(this, ForgotPassword.class);
+        Intent intent = new Intent(this, ForgotPasswordActivity.class);
         startActivity(intent);
         finish();
     }

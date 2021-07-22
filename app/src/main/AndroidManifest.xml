@@ -9,16 +9,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FriendlyChat">
-        <activity android:name=".ForgotPassword"></activity>
-        <activity android:name=".SignIn" >
+        <activity android:name=".activities.AddFriendsActivity"/>
+        <activity android:name=".activities.ChatActivity" />
+        <activity
+            android:name=".activities.ForgotPasswordActivity"
+            android:theme="@style/NoActionBar" />
+        <activity
+            android:name=".activities.SignInActivity"
+            android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
-        <activity android:name=".SignUp"/>
+        <activity android:name=".activities.MainActivity" />
+        <activity
+            android:name=".activities.SignUpActivity"
+            android:theme="@style/NoActionBar" />
     </application>
 
 </manifest>

@@ -1,4 +1,4 @@
-package com.example.friendlychat;
+package com.example.friendlychat.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,16 +12,21 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.friendlychat.R;
+import com.example.friendlychat.classes.PersonInfo;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-public class SignUp extends AppCompatActivity {
+public class SignUpActivity extends AppCompatActivity {
 
-    private EditText email , password1 , password2 ;
+    private EditText email , password1 , password2 , name ;
     private FirebaseAuth firebaseAuth;
     private SharedPreferences sharedPreferences;
+    private DatabaseReference databaseReference;
     private SharedPreferences.Editor editor;
     private ProgressDialog progressDialog;
 
@@ -32,6 +37,7 @@ public class SignUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
         firebaseAuth = FirebaseAuth.getInstance();
+        name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         password1 = findViewById(R.id.password1);
         password2 = findViewById(R.id.password2);
@@ -50,7 +56,12 @@ public class SignUp extends AppCompatActivity {
 
     public void register(View view)
     {
-        if (email.getText().toString().isEmpty())
+        if (name.getText().toString().isEmpty())
+        {
+            name.setError("Enter your name");
+        }
+
+        else if (email.getText().toString().isEmpty())
         {
             email.setError("Enter your email");
             return;
@@ -96,18 +107,26 @@ public class SignUp extends AppCompatActivity {
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (task.isSuccessful()) {
+                    editor.putString("name",name.getText().toString());
                     editor.putString("email",email.getText().toString());
                     editor.putString("password",password1.getText().toString());
                     editor.putString("First Time Second Time","Second Time");
                     editor.commit();
-                    Toast.makeText(SignUp.this, "Successfully registered", Toast.LENGTH_LONG).show();
-                    Intent intent = new Intent(SignUp.this, MainActivity.class);
+
+                    databaseReference = FirebaseDatabase.getInstance().getReference().child("persons");
+                    PersonInfo personInfo = new PersonInfo();
+                    personInfo.setName(sharedPreferences.getString("name",""));
+                    personInfo.setEmail(sharedPreferences.getString("email",""));
+                    databaseReference.push().setValue(personInfo);
+
+                    Toast.makeText(SignUpActivity.this, "Successfully registered", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();
                 }
                 else
                 {
-                    Toast.makeText(SignUp.this, "Sign Up Failed", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SignUpActivity.this, "Sign Up Failed", Toast.LENGTH_LONG).show();
                 }
                 progressDialog.dismiss();
             }
@@ -117,7 +136,7 @@ public class SignUp extends AppCompatActivity {
 
     public void SignInActivity(View view)
     {
-        Intent intent = new Intent(this, SignIn.class);
+        Intent intent = new Intent(this, SignInActivity.class);
         startActivity(intent);
         finish();
     }
