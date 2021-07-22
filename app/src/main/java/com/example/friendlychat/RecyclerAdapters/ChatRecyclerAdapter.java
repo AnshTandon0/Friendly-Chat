@@ -1,18 +1,22 @@
 package com.example.friendlychat.RecyclerAdapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.opengl.Visibility;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.friendlychat.R;
 import com.example.friendlychat.classes.Message;
 
@@ -89,14 +93,16 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<ChatRecyclerAdapte
             holder.message.setText(messageList.get(position).getMessage());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.LEFT;
-            holder.message.setLayoutParams(params);
+            holder.cardView.setLayoutParams(params);
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#EDBF35"));
         }
         else
         {
             holder.message.setText(messageList.get(position).getMessage());
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.RIGHT;
-            holder.message.setLayoutParams(params);
+            holder.cardView.setLayoutParams(params);
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#B5D5F8"));
         }
 
 
@@ -117,6 +123,27 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<ChatRecyclerAdapte
 
         if ( !messageList.get(position).getImageUrl().equalsIgnoreCase("") )
         {
+            holder.imageView.setVisibility(View.VISIBLE);
+            if ( messageList.get(position).getSender().equalsIgnoreCase(name))
+            {
+                Glide.with(holder.imageView)
+                        .asBitmap()
+                        .load(messageList.get(position).getImageUrl())
+                        .into(holder.imageView);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.gravity = Gravity.LEFT;
+                holder.imageView.setLayoutParams(params);
+            }
+            else
+            {
+                Glide.with(holder.imageView)
+                        .asBitmap()
+                        .load(messageList.get(position).getImageUrl())
+                        .into(holder.imageView);
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                params.gravity = Gravity.RIGHT;
+                holder.imageView.setLayoutParams(params);
+            }
 
         }
 
@@ -139,10 +166,12 @@ public class ChatRecyclerAdapter extends RecyclerView.Adapter<ChatRecyclerAdapte
         private ImageView imageView;
         private TextView date , time;
         private TextView message;
+        private CardView cardView;
 
         public ChatViewHolder(@NonNull @NotNull View itemView) {
             super(itemView);
 
+            cardView = itemView.findViewById(R.id.card_view);
             imageView = itemView.findViewById(R.id.imageView);
             date = itemView.findViewById(R.id.date);
             time = itemView.findViewById(R.id.time);
